@@ -1,5 +1,5 @@
 # TaskBoard
-Task Board Agent-Based Model
+Netlogo Task Board Agent-Based Model
 
 TaskBoard is a Task Board Agent-Based Model programmed in NetLogo.
 
