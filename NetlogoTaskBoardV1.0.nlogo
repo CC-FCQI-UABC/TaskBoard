@@ -53,7 +53,7 @@ to read-csv
 
   file-open csv-file ; open the file with the tasks data
 
-  if csv-file = "Sip-task-info.csv" [
+  if csv-file = "input/Sip-task-info.csv" [
     ; We'll read all the data in a single loop
     while [ not file-at-end? ] [
       ; here the CSV extension grabs a single line and puts the read data in a list
@@ -79,7 +79,7 @@ to read-csv
     ]
   ]
 
-    if csv-file = "Software-Development-Plan.csv" [
+    if csv-file = "input/Software-Development-Plan.csv" [
     ; We'll read all the data in a single loop
     while [ not file-at-end? ] [
       ; here the CSV extension grabs a single line and puts the read data in a list
@@ -220,12 +220,12 @@ end
 
 ; procedure to write some task properties to a file
 to write-tasks-to-csv
-  csv:to-file "tasks.csv" [ (list task-number project-breakdown-code task-description planned-start planned-finish planned-hours (complete-hours / planned-hours) actual-hours) ] of tasks
+  csv:to-file "output/tasks.csv" [ (list task-number project-breakdown-code task-description planned-start planned-finish planned-hours (complete-hours / planned-hours) actual-hours) ] of tasks
 end
 
 ; procedure to write some employee properties to a file
 to write-employees-to-csv
-  csv:to-file "employees.csv" [ (list  employee-number status role motivation) ] of employees
+  csv:to-file "output/employees.csv" [ (list  employee-number status role motivation) ] of employees
 end
 
 to tasks-board-update
@@ -502,11 +502,11 @@ HORIZONTAL
 CHOOSER
 1
 220
-276
+286
 265
 csv-file
 csv-file
-"Sip-task-info.csv" "Software-Development-Plan.csv"
+"input/Sip-task-info.csv" "input/Software-Development-Plan.csv"
 1
 
 SWITCH
@@ -516,7 +516,7 @@ SWITCH
 299
 load-file
 load-file
-0
+1
 1
 -1000
 
