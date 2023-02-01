@@ -60,10 +60,10 @@ to read-csv
       let data csv:from-row file-read-line
       ; now we can use that list to create a tasks with the saved properties
       create-tasks 1 [
-        set color red
+        set color blue
         set shape "square"
         set tasks-count 0
-        set status "to-do"
+        set status "backlog"
         set task-number item 0 data
         set task-description item 1 data
         set priority item 2 data
@@ -87,10 +87,10 @@ to read-csv
       ; now we can use that list to create a tasks with the saved properties
       if item 5 data != ""[ ;if the retived task have an assigned team member, then create a task in the model.
         create-tasks 1 [
-          set color red
+          set color blue
           set shape "square"
           set tasks-count 0
-          set status "to-do"
+          set status "backlog"
           set task-number item 2 data
           set task-description item 4 data
           set priority item 11 data
@@ -115,10 +115,10 @@ to setup-tasks
     read-csv
   ][
     create-tasks number-of-tasks [
-      set color red
+      set color blue
       set shape "square"
       set tasks-count 0
-      set status "to-do"
+      set status "backlog"
       set task-number 100
       set task-description "task-description"
       set priority 0
@@ -158,13 +158,14 @@ end
 
 ;;PROCEDURES SECTION
 to processing-the-tasks
-  the-employee-picks-tasks-from-the-to-do-backlog
+  the-employee-picks-tasks-from-the-backlog
+  the-employee-moves-assignments-to-the-to-do-queue
   the-employee-moves-assignments-to-the-in-progress-queue
   the-employee-achieves-and-moves-tasks-to-the-done-cue
 
 end
 
-to the-employee-picks-tasks-from-the-to-do-backlog
+to the-employee-picks-tasks-from-the-backlog
   foreach sort employees[
     the-employee -> ask the-employee [
       if count out-link-neighbors with [status = "in-progress"] < assigned-tasks-employee [
@@ -173,6 +174,16 @@ to the-employee-picks-tasks-from-the-to-do-backlog
           set tasks-count tasks-count - 1
         ]
       ]
+    ]
+  ]
+  tasks-board-update
+end
+
+to the-employee-moves-assignments-to-the-to-do-queue
+  ask employees [
+    ask out-link-neighbors with [status = "backlog"][
+        set color red
+        set status "to-do"
     ]
   ]
   tasks-board-update
@@ -213,7 +224,7 @@ to create-team
   [
     create-links-with other employees
     [
-      set color blue
+      set color pink
     ]
   ]
 end
@@ -231,11 +242,11 @@ end
 to tasks-board-update
   let x -16
   let y 0
-  foreach sort tasks with [status = "to-do"][
+  foreach sort tasks with [status = "backlog"][
     the-task -> ask the-task [
       setxy x y
 
-      ifelse x >= -6
+      ifelse x >= -8
       [set x -16
       set y y + 1]
       [set x x + 1]
@@ -245,14 +256,14 @@ to tasks-board-update
     ]
   ]
 
-  set x -5
+  set x -7
   set y 0
-  foreach sort tasks with [status = "in-progress"][
+  foreach sort tasks with [status = "to-do"][
     the-task -> ask the-task [
       setxy x y
 
-      ifelse x >= 5
-      [set x -5
+      ifelse x >= 0
+      [set x -7
       set y y + 1]
       [set x x + 1]
 
@@ -261,14 +272,30 @@ to tasks-board-update
     ]
   ]
 
-  set x 6
+  set x 1
+  set y 0
+  foreach sort tasks with [status = "in-progress"][
+    the-task -> ask the-task [
+      setxy x y
+
+      ifelse x >= 8
+      [set x 1
+      set y y + 1]
+      [set x x + 1]
+
+      if y >= 17
+      [set y 0]
+    ]
+  ]
+
+  set x 9
   set y 0
   foreach sort tasks with [status = "done"][
     the-task -> ask the-task [
       setxy x y
 
       ifelse x >= 16
-      [set x 6
+      [set x 9
       set y y + 1]
       [set x x + 1]
 
@@ -396,9 +423,10 @@ true
 true
 "" ""
 PENS
+"Backlog" 1.0 0 -13345367 true "" "plot count tasks with [status = \"backlog\"]"
 "ToDo" 1.0 0 -2674135 true "" "plot count tasks with [status = \"to-do\"]"
+"InProgress" 1.0 0 -1184463 true "" "plot count tasks with [status = \"in-progress\"]"
 "Done" 1.0 0 -10899396 true "" "plot count tasks with [status = \"done\"]"
-"InProgress" 1.0 0 -13345367 true "" "plot count tasks with [status = \"in-progress\"]"
 
 SLIDER
 0
