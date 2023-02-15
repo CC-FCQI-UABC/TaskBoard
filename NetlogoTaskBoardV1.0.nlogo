@@ -8,12 +8,13 @@ globals [tasks-count fibonacci]
 ;;BREED DEFINITIONS
 directed-link-breed [red-links red-link]
 undirected-link-breed [blue-links blue-link]
-breed [employees employee]
+breed [team-members team-member]
 breed [tasks task]
 
 ;AGENT PROPERTIES DEF SECTION
-employees-own [
-  employee-number
+
+team-members-own [
+  team-member-number
   status
   role
   motivation
@@ -39,7 +40,7 @@ tasks-own [
 to setup
   clear-all
   setup-tasks
-  setup-employees
+  setup-team-members
   reset-ticks
 end
 
@@ -137,16 +138,23 @@ to setup-tasks
   tasks-board-update
 end
 
-to setup-employees
-  create-employees employees-number [
+to setup-team-members
+  create-team-members team-members-number [
     setxy random-xcor (random 16) - 16
     set shape "person"
-    set employee-number random 10000
+    set team-member-number random 10000
     set status "Active"
     set role "Developer"
     set motivation 1.0
   ]
   create-team
+    foreach sort tasks[
+    the-task -> ask the-task [
+      ask team-members [
+
+      ]
+    ]
+  ]
 end
 
 ;;EXECUTION SECTION
@@ -158,17 +166,17 @@ end
 
 ;;PROCEDURES SECTION
 to processing-the-tasks
-  the-employee-picks-tasks-from-the-backlog
-  the-employee-moves-assignments-to-the-to-do-queue
-  the-employee-moves-assignments-to-the-in-progress-queue
-  the-employee-achieves-and-moves-tasks-to-the-done-cue
+ ;the-project-manager-picks-tasks-from-the-backlog
+  the-team-member-moves-assignments-to-the-to-do-queue
+  the-team-member-moves-assignments-to-the-in-progress-queue
+  the-team-member-achieves-and-moves-tasks-to-the-done-cue
 
 end
 
-to the-employee-picks-tasks-from-the-backlog
-  foreach sort employees[
-    the-employee -> ask the-employee [
-      if count out-link-neighbors with [status = "in-progress"] < assigned-tasks-employee [
+to the-project-manager-picks-tasks-from-the-backlog
+  foreach sort team-members[
+    the-team-member -> ask the-team-member [
+      if count out-link-neighbors with [status = "in-progress"] < assigned-tasks-team-member [
         if tasks-count >= 0 [
           create-link-with task tasks-count
           set tasks-count tasks-count - 1
@@ -179,18 +187,18 @@ to the-employee-picks-tasks-from-the-backlog
   tasks-board-update
 end
 
-to the-employee-moves-assignments-to-the-to-do-queue
-  ask employees [
+to the-team-member-moves-assignments-to-the-to-do-queue
+  ask team-members [
     ask out-link-neighbors with [status = "backlog"][
         set color red
-        set status "to-do"
-    ]
-  ]
-  tasks-board-update
+      set status "to-do"
+   ]
+ ]
+ tasks-board-update
 end
 
-to the-employee-moves-assignments-to-the-in-progress-queue
-  ask employees [
+to the-team-member-moves-assignments-to-the-in-progress-queue
+  ask team-members [
     ask out-link-neighbors with [status = "to-do"][
         set color yellow
         set status "in-progress"
@@ -199,8 +207,8 @@ to the-employee-moves-assignments-to-the-in-progress-queue
   tasks-board-update
 end
 
-to the-employee-achieves-and-moves-tasks-to-the-done-cue
-  ask employees [
+to the-team-member-achieves-and-moves-tasks-to-the-done-cue
+  ask team-members [
     ask out-link-neighbors with [status = "in-progress"][
       ifelse complete-hours >= planned-hours[
         set color green
@@ -218,11 +226,11 @@ to the-employee-achieves-and-moves-tasks-to-the-done-cue
   tasks-board-update
 end
 
-;; forms a link between all employees
+;; forms a link between all team-members
 to create-team
-  ask employees
+  ask team-members
   [
-    create-links-with other employees
+    create-links-with other team-members
     [
       set color pink
     ]
@@ -234,9 +242,9 @@ to write-tasks-to-csv
   csv:to-file "output/tasks.csv" [ (list task-number project-breakdown-code task-description planned-start planned-finish planned-hours (complete-hours / planned-hours) actual-hours) ] of tasks
 end
 
-; procedure to write some employee properties to a file
-to write-employees-to-csv
-  csv:to-file "output/employees.csv" [ (list  employee-number status role motivation) ] of employees
+; procedure to write some team-member properties to a file
+to write-team-members-to-csv
+  csv:to-file "output/team-members.csv" [ (list  team-member-number status role motivation) ] of team-members
 end
 
 to tasks-board-update
@@ -433,8 +441,8 @@ SLIDER
 10
 275
 43
-employees-number
-employees-number
+team-members-number
+team-members-number
 1
 100
 3.0
@@ -517,11 +525,11 @@ SLIDER
 185
 275
 218
-assigned-tasks-employee
-assigned-tasks-employee
+assigned-tasks-team-member
+assigned-tasks-team-member
 1
 10
-10.0
+9.0
 1
 1
 NIL
@@ -585,8 +593,8 @@ BUTTON
 293
 1014
 326
-Write employees to employees.csv
-write-employees-to-csv
+Write employees to team-members.csv
+write-team-members-to-csv
 NIL
 1
 T
