@@ -166,7 +166,7 @@ end
 
 ;;PROCEDURES SECTION
 to processing-the-tasks
- ;the-project-manager-picks-tasks-from-the-backlog
+ the-project-manager-picks-tasks-from-the-backlog
   the-team-member-moves-assignments-to-the-to-do-queue
   the-team-member-moves-assignments-to-the-in-progress-queue
   the-team-member-achieves-and-moves-tasks-to-the-done-cue
@@ -565,7 +565,7 @@ probability-of-advance
 probability-of-advance
 0
 1
-0.5
+0.64
 0.01
 1
 NIL
